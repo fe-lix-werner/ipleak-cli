@@ -26,9 +26,8 @@ def test_ips(maxTime,maxTests,ipvX):
             break
         ip_entry = ipvX()
         if not len(ip_entry) == 0:
-            ip  = ip_entry['ip']
-            if not ip in ips:
-                ips.append(ip)
+            if not ip_entry["ip"] in ips:
+                ips.append(ip_entry["ip"])
                 data.append(ip_entry)
     return data
 
@@ -56,7 +55,7 @@ def get_ipv6():
 
         # Get the content stored in the BytesIO object (in byte characters)
         get_body = b_obj.getvalue()
-        return get_body.decode('utf8')
+        return json.loads(get_body.decode('utf8'))
     except pycurl.error:
         return ""
 
@@ -79,5 +78,3 @@ def get_random_alphanumeric_string(length):
     letters_and_digits = string.ascii_letters + string.digits
     result_str = ''.join((random.choice(letters_and_digits) for i in range(length)))
     return result_str
-
-

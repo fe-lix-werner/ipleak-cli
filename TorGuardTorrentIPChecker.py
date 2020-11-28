@@ -17,6 +17,8 @@ def getTorrentIps(url):
     response = requests.get(url)
     ipAsJSON = response.json()
     ips =[]
+    if len(ipAsJSON) == 0:
+        return ips
     data = ipAsJSON["hits"]
     for entry in data:
        ip = entry["addr"]

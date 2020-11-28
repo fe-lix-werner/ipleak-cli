@@ -1,57 +1,69 @@
-from TorrentIPLeak import TorrentIpLeak as tLeak
-import IPv4IPv6 as ipLeak
+import TorGuardTorrentIPChecker
+import IPLeak
 from halo import Halo
 import time
+import threading
 
 green = '\033[92m'
 red = '\033[91m'
+end = '\033[0m'
 
+ipv4 = []
+ipv6 = []
+dns = []
+torrent_ips = []
 
-def checkIpLeak():
-    ipv4s = []
-    spinner = Halo(text='Looking for IPv4 Adresses', spinner='dots')
+def check_for_small_leak():
+    spinner = Halo(text='Gathering IP-Adresses', spinner='dots')
     spinner.start()
-    ipv4s = iLeak.check_IPv4Leak()
+    ipv4leak = threading.Thread(target=update_ipv4, args=(5,100))
+    ipv6leak = threading.Thread(target=update_ipv6, args=(5,100))
+    ip_torrent_leak = threading.Thread(target=update_torrent_ip, args=[5])
+
+    ipv4leak.start()
+    ipv6leak.start()
+    ip_torrent_leak.start()
+
+    ipv4leak.join()
+    update_spinner(ipv4,spinner,"ipv4")
+
+    ipv6leak.join()
+    update_spinner(ipv6,spinner,"ipv6")
+
+    ip_torrent_leak.join()
+    update_spinner(torrent_ips,spinner,"torrent ip")
+
     spinner.stop()
-    print(ipv4s)
+    time.sleep(5)
+    spinner.succeed("Successfully retrieved addresses")
 
-def checkIpsEvery5Seconds(tl):
-        count = 0
-        spinner = Halo(text='Looking for new entries', spinner='dots')
+
+def update_spinner(data,spinner,string):
+    if len(data) > 0:
+        spinner.succeed("Successfully retrieved %s addresses" % string)
         spinner.start()
-        while count < 5:
-            time.sleep(5)
-            count +=1
-            updatedIps = tl.updateIps()
-            spinner.stop()
-            if len(updatedIps) > 0:
-                if (len(updatedIps) == 1):
-                    print("Found " +str(len(updatedIps)) +" new entry:")
-                else:
-                    print("Found " +str(len(updatedIps)) +" new entries:")
-                for entry in updatedIps:
-                    color = ""
-                    if entry[1] == tl.standard_ip:
-                        color = green
-                    else:
-                        color = red
-                    print(time.ctime(int(entry[0])) + ":\t\t" + color + entry[1] + '\033[0m')
-            spinner.start()
-        spinner.stop()
-        print("The leak test has finished.")
-        leaking = 1
-        for ip in tl.ips:
-            if not ip == tl.standard_ip:
-                leaking = 0
-        if leaking:
-            print(red+"!!!\tYOUR TORRENT IP SEEMS TO BE LEEKING\t!!!"+ '\033[0m')
-        else:
-            print(green+ "EVERYTHING SEEMS TO BE ALRIGHT"+ '\033[0m')
+    else:
+        spinner.fail("Could not retrieve any %s addresses" % string)
+        spinner.start()
 
+
+def update_ipv4(maxTime,maxTests):
+    ipv4.clear()
+    entries = IPLeak.test_ipv4(maxTime,maxTests)
+    for entry in entries:
+        ipv4.append(entry)
+
+def update_ipv6(maxTime,maxTests):
+    ipv6.clear()
+    entries = IPLeak.test_ipv6(maxTime,maxTests)
+    for entry in entries:
+        ipv6.append(entry)
+
+def update_torrent_ip(maxTime):
+    torrent_ips.clear()
+    entries = TorGuardTorrentIPChecker.check_torrent_leak(maxTime)
+    for entry in entries:
+        torrent_ips.append(entry)
 
 if __name__ == "__main__":
-    #tl = tLeak()
-    #checkIpsEvery5Seconds(tl)
-    il = ipLeak()
-    checkIpLeak(il)
-
+    check_for_small_leak()

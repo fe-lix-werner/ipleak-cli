@@ -17,6 +17,8 @@ dns = []
 torrent_ips = []
 
 def check_for_small_leak():
+    print("\n\n")
+
     spinner = Halo(text='Gathering IP-Adresses', spinner='dots')
     spinner.start()
     ipv4leak = threading.Thread(target=update_ipv4, args=(20,50))
@@ -53,6 +55,8 @@ def check_for_small_leak():
     if len(torrent_ips) > 0:
         print_torrent_results()
 
+    print("\n\n")
+
 def print_ipv4_results():
     print("\n\t" + CBLUE2 + "Discovered IPv4 Adresses\n" + CEND)
     print_ips(ipv4)
@@ -67,8 +71,6 @@ def print_ipv6_results():
 def print_dns_results():
     print("\n\t" + CBLUE2 + "Discovered DNS Server Adresses \n" + CEND)
     print_ips(dns)
-    if (len(dns) > 1):
-        print("\n\t\t" + CRED2 + "!!!WARNING YOUR DNS might be leeking!!!" + CEND)
 
 def print_torrent_results():
     print("\n\t" + CBLUE2 + "Discovered Torrent IP Adresses \n" + CEND)

@@ -3,6 +3,7 @@ import hashlib
 import time
 import json
 import os, sys, subprocess
+import IPLeak
 
 TORGUARD_URL = 'https://torguard.net/checkmytorrentipaddress.php?ajax&hash=%s'
 TORGUARD_MAGNET = "magnet:?xt=urn:btih:{0}&dn=checkmyiptorrent+Tracking+Link&tr=http%3A%2F%2F34.204.227.31%2F"
@@ -17,14 +18,16 @@ def getTorrentIps(url):
     response = requests.get(url)
     ipAsJSON = response.json()
     ips =[]
-    if len(ipAsJSON) == 0:
-        return ips
+    res = []
     data = ipAsJSON["hits"]
+    if not data:
+        return ips
     for entry in data:
        ip = entry["addr"]
        if not ip in ips:
            ips.append(ip)
-    return ips
+           res.append(IPLeak.get_ip_info(ip))
+    return res
 
 def open_magnet(magnet):
     """Open magnet according to os."""

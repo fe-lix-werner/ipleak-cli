@@ -9,6 +9,7 @@ from io import BytesIO
 IPv4_URL = 'https://ipv4.ipleak.net/?mode=json'
 IPv6_URL = 'https://ipv6.ipleak.net/?mode=json'
 DNS_URL = 'https://%s.ipleak.net/dnsdetect/'
+IP_INFO_URL = 'https://ipleak.net/?mode=json&ip=%s'
 
 def test_ipv4(maxTime,maxTests):
     return test_ips(maxTime,maxTests,get_ipv4)
@@ -70,8 +71,11 @@ def test_dns(maxTime,maxTests):
         randomString = get_random_alphanumeric_string(40)
         res = requests.get(DNS_URL % (randomString)).text
         if not res in arr:
-            arr.append(res)
+            arr.append(get_ip_info(res))
     return arr
+
+def get_ip_info(ip):
+    return requests.get(IP_INFO_URL % ip).json()
 
 
 def get_random_alphanumeric_string(length):

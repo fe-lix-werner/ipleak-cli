@@ -1,8 +1,8 @@
-import TorGuardTorrentIPChecker
-import IPLeak
-from halo import Halo
-import time
 import threading
+import IPLeak
+
+from halo import Halo
+
 
 CGREY    = '\33[90m'
 CRED2    = '\33[91m'
@@ -46,12 +46,12 @@ def check_for_small_leak():
     spinner.stop()
     print("\n\nRESULTS")
     print_ipv4_results()
-    
+
     if len(ipv6) > 0:
         print_ipv6_results()
-    
+
     print_dns_results()
-    
+
     if len(torrent_ips) > 0:
         print_torrent_results()
 
@@ -116,7 +116,7 @@ def update_ipv6(maxTime,maxTests):
 
 def update_torrent_ip(maxTime):
     torrent_ips.clear()
-    entries = TorGuardTorrentIPChecker.check_torrent_leak(maxTime)
+    entries = IPLeak.test_torrent_ip(maxTime)
     for entry in entries:
         torrent_ips.append(entry)
 

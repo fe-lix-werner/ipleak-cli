@@ -5,11 +5,16 @@ import time
 import json
 import pycurl
 from io import BytesIO
+from bs4 import BeautifulSoup
+import hashlib
+import os, sys, subprocess
 
 IPv4_URL = 'https://ipv4.ipleak.net/?mode=json'
 IPv6_URL = 'https://ipv6.ipleak.net/?mode=json'
 DNS_URL = 'https://%s.ipleak.net/dnsdetect/'
+TORRENT_URL = 'https://ipleak.net/?thash=%s'
 IP_INFO_URL = 'https://ipleak.net/?mode=json&ip=%s'
+MAGNET_LINK = 'magnet:?xt=urn:btih:{randomHash}&tr=https://ipleak.net/announce.php%3Fh%3D{randomHash}&dn=ipleak.net+torrent+detection'
 
 def test_ipv4(maxTime,maxTests):
     return test_ips(maxTime,maxTests,get_ipv4)
@@ -61,6 +66,21 @@ def get_ipv6():
         return ""
 
 
+def test_torrent_ip(timeToWait):
+    randomH = hashlib.sha1(os.urandom(32)).hexdigest()
+    open_magnet(MAGNET_LINK.format(randomHash = randomH))
+    ips = []
+    ips_with_info = []
+    time.sleep(timeToWait)
+    res = requests.get(TORRENT_URL % randomH)
+    soup = BeautifulSoup(res.content,  "html.parser")
+    cont = soup.find_all(class_="digital")
+    for e in cont:
+        ip = e.get_text()
+        if not ip in ips:
+            ips.append(ip)
+            ips_with_info.append(get_ip_info(ip))
+    return ips_with_info
 
 def test_dns(maxTime,maxTests):
     startTime = time.time()
@@ -82,3 +102,19 @@ def get_random_alphanumeric_string(length):
     letters_and_digits = string.ascii_letters + string.digits
     result_str = ''.join((random.choice(letters_and_digits) for i in range(length)))
     return result_str
+
+def open_magnet(magnet):
+    """Open magnet according to os."""
+    if sys.platform.startswith('linux'):
+        subprocess.Popen(['xdg-open', magnet],
+                        stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+    elif sys.platform.startswith('win32'):
+        os.starFile(magnet)
+    elif sys.platform.startswith('cygwin'):
+        os.startfile(magnet)
+    elif sys.platform.startswith('darwin'):
+        subprocess.Popen(['open', magnet],
+                        stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+    else:
+        subprocess.Popen(['xdg-open', magnet],
+                        stdout=subprocess.PIPE, stderr=subprocess.PIPE)

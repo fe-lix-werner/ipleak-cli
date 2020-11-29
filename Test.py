@@ -1,6 +1,6 @@
 import threading
 import IPLeak
-
+import os
 from halo import Halo
 
 
@@ -17,8 +17,7 @@ dns = []
 torrent_ips = []
 
 def check_for_small_leak():
-    print("\n\n")
-
+    os.system('clear')
     spinner = Halo(text='Gathering IP-Adresses', spinner='dots')
     spinner.start()
     ipv4leak = threading.Thread(target=update_ipv4, args=(20,50))

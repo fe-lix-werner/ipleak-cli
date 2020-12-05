@@ -4,10 +4,10 @@ Check you [ipleak.com](https://ipleak.com) information from the cli.
 
 # Features
 
-[x] Gets your IPv4 and IPv6 adresses  
-[x] Gets your DNS Server adresses  
-[x] Opens you default torrent application and checks your torrent IP  
-[] TODO: Check if your WEBRTC is leaking
+- [x] Gets your IPv4 and IPv6 adresses  
+- [x] Gets your DNS Server adresses  
+- [x] Opens you default torrent application and checks your torrent IP  
+- [ ] TODO: Check if your WEBRTC is leaking
 
 # Installation
 

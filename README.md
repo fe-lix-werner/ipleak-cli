@@ -12,8 +12,8 @@ Check you [ipleak.com](https://ipleak.com) information from the cli
 # Installation
 
 ```
-git clone https://github.com/fe-lix-werner/ipleak-cli-IP-DNS-Torrent-IP-tester.git
-cd ipleak-cli-IP-DNS-Torrent-IP-tester
+git clone https://github.com/fe-lix-werner/ipleak-cli.git
+cd ipleak-cli
 pip3 install -r requirements.txt
 ```
 

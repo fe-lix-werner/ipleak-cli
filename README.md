@@ -1,4 +1,4 @@
-# IPLeak cli tool
+# ipleak cli
 
 Check you [ipleak.net](https://ipleak.net) information from the cli
 

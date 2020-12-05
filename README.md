@@ -1,6 +1,6 @@
 # IPLeak cli tool
 
-Check you [ipleak.com](https://ipleak.com) information from the cli.
+Check you [ipleak.com](https://ipleak.com) information from the cli
 
 # Features
 
@@ -19,7 +19,7 @@ pip3 install -r requirements.txt
 
 # Example
 
-I wrote a small example that does a small test and prints out the ip.
+I wrote a small example that does a small test and prints out the ip
 
 ```
 python3 Test.py

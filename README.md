@@ -6,7 +6,7 @@ Check you [ipleak.net](https://ipleak.net) information from the cli
 
 - [x] Retrieves your IPv4 and IPv6 adresses  
 - [x] Retrieves your DNS Server adresses  
-- [x] Opens you default torrent application and checks your torrent IP  
+- [x] Automatically opens you default torrent application and checks your torrent IP  
 - [ ] TODO: Check if your WEBRTC is leaking
 
 # Installation

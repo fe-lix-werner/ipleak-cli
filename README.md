@@ -1,6 +1,6 @@
 # IPLeak cli tool
 
-Check you [ipleak.com](https://ipleak.com) information from the cli
+Check you [ipleak.net](https://ipleak.net) information from the cli
 
 # Features
 

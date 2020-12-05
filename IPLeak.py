@@ -4,10 +4,10 @@ import string
 import time
 import json
 import pycurl
-from io import BytesIO
-from bs4 import BeautifulSoup
 import hashlib
 import os, sys, subprocess
+from io import BytesIO
+from bs4 import BeautifulSoup
 
 IPv4_URL = 'https://ipv4.ipleak.net/?mode=json'
 IPv6_URL = 'https://ipv6.ipleak.net/?mode=json'
@@ -39,8 +39,12 @@ def test_ips(maxTime,maxTests,ipvX):
 
 
 def get_ipv4():
-    res = requests.get(IPv4_URL)
-    return res.json()
+    try:
+        ressponse = requests.get(IPv4_URL)
+        ip = ressponse.json()
+        return ip
+    except:
+        return ''
 
 def get_ipv6():
     try:
@@ -63,8 +67,15 @@ def get_ipv6():
         get_body = b_obj.getvalue()
         return json.loads(get_body.decode('utf8'))
     except pycurl.error:
-        return ""
+        return ''
 
+def get_dns_info():
+    try:
+        randomString = get_random_alphanumeric_string(40)
+        res = requests.get(DNS_URL % (randomString)).text
+        return get_ip_info(res)
+    except:
+        return ''
 
 def test_torrent_ip(timeToWait):
     randomH = hashlib.sha1(os.urandom(32)).hexdigest()
@@ -72,31 +83,37 @@ def test_torrent_ip(timeToWait):
     ips = []
     ips_with_info = []
     time.sleep(timeToWait)
-    res = requests.get(TORRENT_URL % randomH)
-    soup = BeautifulSoup(res.content,  "html.parser")
-    cont = soup.find_all(class_="digital")
-    for e in cont:
-        ip = e.get_text()
-        if not ip in ips:
-            ips.append(ip)
-            ips_with_info.append(get_ip_info(ip))
-    return ips_with_info
+    try:
+        res = requests.get(TORRENT_URL % randomH)
+        soup = BeautifulSoup(res.content,  "html.parser")
+        cont = soup.find_all(class_="digital")
+        for e in cont:
+            ip = e.get_text()
+            if not ip in ips:
+                ips.append(ip)
+                ips_with_info.append(get_ip_info(ip))
+        return ips_with_info
+    except:
+        return ''
+
+def get_ip_info(ip):
+    try:
+        return requests.get(IP_INFO_URL % ip).json()
+    except:
+        return ''
 
 def test_dns(maxTime,maxTests):
     startTime = time.time()
     arr = []
+    ips = []
     for i in range(maxTests):
         if  time.time() - startTime > maxTime:
             break
-        randomString = get_random_alphanumeric_string(40)
-        res = requests.get(DNS_URL % (randomString)).text
-        if not res in arr:
-            arr.append(get_ip_info(res))
+        res = get_dns_info()
+        if not res['ip'] in arr:
+            arr.append(res)
+            ips.append(res['ip'])
     return arr
-
-def get_ip_info(ip):
-    return requests.get(IP_INFO_URL % ip).json()
-
 
 def get_random_alphanumeric_string(length):
     letters_and_digits = string.ascii_letters + string.digits

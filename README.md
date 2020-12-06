@@ -1,6 +1,6 @@
 # ipleak cli
 
-Check you [ipleak.net](https://ipleak.net) information from the cli
+Check your [ipleak.net](https://ipleak.net) information from the cli
 
 # Features
 
